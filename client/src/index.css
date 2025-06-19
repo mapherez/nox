@@ -1,0 +1,75 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #f5f5f5;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#root {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.message {
+  margin-bottom: 0.5rem;
+  display: flex;
+}
+.message.user {
+  justify-content: flex-end;
+}
+.message .bubble {
+  padding: 0.5rem 0.75rem;
+  border-radius: 12px;
+  max-width: 70%;
+  line-height: 1.4;
+}
+.message.user .bubble {
+  background: #007bff;
+  color: white;
+  border-bottom-right-radius: 0;
+}
+.message.assistant .bubble {
+  background: #e0e0e0;
+  color: #222;
+  border-bottom-left-radius: 0;
+}
+
+.input-area {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+.input-area input {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  font-size: 1rem;
+}
+.input-area button {
+  padding: 0 1rem;
+  border: none;
+  background: #007bff;
+  color: white;
+  font-size: 1rem;
+}
+.typing {
+  font-style: italic;
+  opacity: 0.6;
+}
+.blink {
+  display: inline-block;
+  width: 1ch;
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
