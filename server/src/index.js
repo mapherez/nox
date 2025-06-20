@@ -12,6 +12,8 @@ app.use(express.json());
 
 let session;
 let model;
+// maintain a short history of recently emitted tokens for detokenization
+let lastTokens = [];
 
 (async () => {
   try {
@@ -44,8 +46,12 @@ app.post('/chat', async (req, res) => {
   try {
     await session.prompt(message, {
       onToken(tokens) {
-        const text = model.detokenize(tokens);
+        const text = model.detokenize(tokens, false, lastTokens);
         res.write('data: ' + text + '\n\n');
+        lastTokens.push(...tokens);
+        if (lastTokens.length > 3) {
+          lastTokens.splice(0, lastTokens.length - 3);
+        }
       }
     });
   } catch (err) {
