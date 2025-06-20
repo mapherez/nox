@@ -32,23 +32,36 @@ export default function Chat() {
 
     const reader = res.body?.getReader();
     if (!reader) { setLoading(false); return; }
+
+    const decoder = new TextDecoder();
+    let buffer = '';
     let assistant = '';
-    while (true) {
+    let doneReading = false;
+    while (!doneReading) {
       const { value, done } = await reader.read();
       if (done) break;
-      assistant += new TextDecoder().decode(value);
-      // remove "data: " prefix and newline
-      assistant = assistant.replace(/^data: /, '');
-      setMessages(prev => {
-        const arr = [...prev];
-        const last = arr[arr.length - 1];
-        if (last && last.role === 'assistant') {
-          arr[arr.length - 1] = { role: 'assistant', content: assistant };
-        } else {
-          arr.push({ role: 'assistant', content: assistant });
-        }
-        return arr;
-      });
+      buffer += decoder.decode(value, { stream: true });
+
+      const parts = buffer.split('\n\n');
+      buffer = parts.pop() ?? '';
+
+      for (const part of parts) {
+        const line = part.trim();
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6);
+        if (data === '[DONE]') { doneReading = true; break; }
+        assistant += data;
+        setMessages(prev => {
+          const arr = [...prev];
+          const last = arr[arr.length - 1];
+          if (last && last.role === 'assistant') {
+            arr[arr.length - 1] = { role: 'assistant', content: assistant };
+          } else {
+            arr.push({ role: 'assistant', content: assistant });
+          }
+          return arr;
+        });
+      }
     }
     setLoading(false);
   }
