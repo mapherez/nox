@@ -4,9 +4,5 @@ export interface MessageProps {
 }
 
 export default function Message({ role, content }: MessageProps) {
-  return (
-    <div className={`message ${role}`}> 
-      <div className="bubble">{content}</div>
-    </div>
-  );
+  return <div className={`message ${role}`}>{content}</div>;
 }
