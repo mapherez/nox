@@ -17,7 +17,9 @@ let model;
   try {
     const llama = await getLlama();
     model = await llama.loadModel({
-      modelPath: process.env.LLAMA_MODEL || path.join(__dirname, '../models/mistral-7b.gguf')
+      modelPath: process.env.LLAMA_MODEL || path.join(__dirname, '../models/mistral-7b.gguf'),
+      gpuLayers: 20,
+      useMmap: true
     });
     const context = await model.createContext();
     session = new LlamaChatSession({ contextSequence: context.getSequence() });
